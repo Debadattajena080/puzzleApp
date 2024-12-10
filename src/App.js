@@ -111,7 +111,7 @@ const App = () => {
         ))}
       </div>
       {isSolved && <p className="victory-message">You solved it in {moves} moves and {Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, '0')}! 🎉</p>}
-      <button onClick={resetGame} className="reset-button">Reset Game</button>
+      <button onClick={resetGame} className="reset-button">New Game</button>
     </div>
   );
 };
