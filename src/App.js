@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import './App.css';
 import Tile from './components/Tile';
+import './App.css';
 
+// Generate and solvability logic remains unchanged
 const generateBoard = () => {
-  const tiles = [...Array(15).keys()].map(n => n + 1); 
+  const tiles = [...Array(15).keys()].map(n => n + 1);
   tiles.push(null);
   do {
     tiles.sort(() => Math.random() - 0.5);
@@ -39,24 +40,40 @@ const App = () => {
     return () => clearInterval(interval);
   }, [isRunning, timer]);
 
-  const moveTile = (index) => {
-    const row = Math.floor(index / 4);
-    const col = index % 4;
+  const handleDragStart = (index) => {
+    window.draggedTileIndex = index;
+  };
+
+  const handleDrop = (index) => {
+    if (index !== emptyIndex) return;
+
+    const draggedIndex = window.draggedTileIndex;
+    if (draggedIndex === undefined) return;
+    const draggedRow = Math.floor(draggedIndex / 4);
+    const draggedCol = draggedIndex % 4;
     const emptyRow = Math.floor(emptyIndex / 4);
     const emptyCol = emptyIndex % 4;
 
     const isNeighbor =
-      (row === emptyRow && Math.abs(col - emptyCol) === 1) ||
-      (col === emptyCol && Math.abs(row - emptyRow) === 1);
+      (draggedRow === emptyRow && Math.abs(draggedCol - emptyCol) === 1) ||
+      (draggedCol === emptyCol && Math.abs(draggedRow - emptyRow) === 1);
 
     if (isNeighbor) {
       const newBoard = [...board];
-      [newBoard[emptyIndex], newBoard[index]] = [newBoard[index], newBoard[emptyIndex]];
+      newBoard[emptyIndex] = newBoard[draggedIndex]; 
+      newBoard[draggedIndex] = null; 
       setBoard(newBoard);
-      setEmptyIndex(index);
+      setEmptyIndex(draggedIndex);
       setMoves(prev => prev + 1);
       if (!isRunning) setIsRunning(true);
     }
+
+  
+    delete window.draggedTileIndex;
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault(); 
   };
 
   const resetGame = () => {
@@ -87,7 +104,9 @@ const App = () => {
             key={index}
             tile={tile}
             isEmpty={tile === null}
-            onClick={() => moveTile(index)}
+            onDragStart={() => handleDragStart(index)}
+            onDrop={() => handleDrop(index)}
+            onDragOver={handleDragOver}
           />
         ))}
       </div>

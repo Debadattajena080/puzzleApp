@@ -1,11 +1,13 @@
-import React from 'react';
-// import './Tile.css';
+import React from "react";
 
-const Tile = ({ tile, onClick, isEmpty }) => {
+const Tile = ({ tile, isEmpty, onDragStart, onDrop, onDragOver }) => {
   return (
     <div
-      className={`tile ${isEmpty ? 'empty' : ''}`}
-      onClick={onClick}
+      className={`tile ${isEmpty ? "empty" : ""}`}
+      draggable={!isEmpty}
+      onDragStart={onDragStart}
+      onDrop={onDrop}
+      onDragOver={onDragOver}
     >
       {tile}
     </div>
